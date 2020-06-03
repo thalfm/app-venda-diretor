@@ -40,8 +40,20 @@ export default function Login() {
 
         const response = await api.efetuarLogin(userName, password);
 
-        login();
-        navigation.navigate('Home');
+console.log(response);
+
+        if (response.data.data && response.data.data.sucesso === 1) {
+            login();
+            navigation.navigate('Home');
+            return;
+        }
+
+        dispatchAlert({
+            type: 'open',
+            alertType: 'error',
+            message: response.data.msg
+        });
+       
     }
 
     useEffect(() => {

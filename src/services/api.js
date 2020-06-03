@@ -1,61 +1,22 @@
+import axios from 'axios';
+
+const apiAxios = axios.create({
+    baseURL: 'http://localhost:8080'
+});
+
 const api = {
 
-    productsFake: [
-        {
-            id: 1,
-            descricao: 'Cimento',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: false
-        },
-        {
-            id: 2,
-            descricao: 'Arruela',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: true
-        },
-        {
-            id: 3,
-            descricao: 'Arruela',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: true
-        },
-        {
-            id: 4,
-            descricao: 'Arruela',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: true
-        },
-        {
-            id: 5,
-            descricao: 'Arruela',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: true
-        },
-        {
-            id: 6,
-            descricao: 'Arruela',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: true
-        },
-        {
-            id: 7,
-            descricao: 'Arruela',
-            valor: '10',
-            quantidade: 1,
-            isOperaDecimal: true
-        }
-    ],
-
-    getProducts: async ({codigoMercadoria, descricao, qualquerParte, atacado, promocao}) => {
-        return {
-            data: api.productsFake
-        };
+    getProducts: ({codigoMercadoria, descricao, qualquerParte, atacado, promocao}) => {
+        return apiAxios.get('venda/orcamento/pesquisa-mercadorias', {
+            token: 'venda-diretor',
+            codigoMercadoria: codigoMercadoria,
+            descricaoMercadoria: descricao,
+            qualquerParte: qualquerParte,
+            itensAtacado: atacado,
+            itensPromocao: promocao,
+            comImagem: true
+            
+        });
     },
     efetuarPedido: async (products) => {
         return {
@@ -65,15 +26,11 @@ const api = {
         };
     },
     efetuarLogin: async(usuario, senha) => {   
-        return {
-            data:  {
-                usuario: {
-                    nome: 'Thales'
-                },
-                token: '123456',
-                message: 'Login efetuado com sucesso!'
-            }
-        };
+        return apiAxios.post('mobile/autenticacao/login', {
+            usuario: usuario,
+            senha: senha,
+            token: 'venda-diretor'
+        })
     }
 
 }
