@@ -1,31 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Image } from 'react-native';
-
+import { View, Image, BackHandler } from 'react-native';
 import { TextInput,  Button } from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
+import { useDispatch } from 'react-redux'
+import {  
+    login as loginAction
+} from '../../store/actions';
 import imageLogo from '../../assets/logo.png'
-
+import { AlertContext } from '../../globalState';
 import { PageView, ViewLogo, CardView, Quadrado, KeyboardArea } from './StyledComponents';
-
+import api from '../../services/api'
 
 export default function Login() {
 
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const { dispatchAlert } = React.useContext(AlertContext);
 
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState(true);
+    const [password, setPassword] = useState('');
+
+    const login = () => dispatch(loginAction());
 
     function onAccessoryPress() {
-        console.log('awerwerw');
         setSecureTextEntry(!secureTextEntry)
     }
 
-    function handleLogin() {
+    async function handleLogin() {
+        if (!userName || !password) {
+            dispatchAlert({
+                type: 'open',
+                alertType: 'info',
+                message: 'Informe um usuário e uma senha'
+            });
+            return
+        }
+
+        const response = await api.efetuarLogin(userName, password);
+
+        login();
         navigation.navigate('Home');
     }
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', () => true)
+        return () =>
+          BackHandler.removeEventListener('hardwareBackPress', () => true)
+      }, [])
+  
 
     return (
         <PageView>

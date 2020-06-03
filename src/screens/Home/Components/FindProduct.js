@@ -1,14 +1,13 @@
-
 import React, { useState, useEffect} from 'react';
 import { ScrollView, View } from 'react-native';
 import { TextInput, Checkbox, Button } from 'react-native-paper';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux'
+import { useNavigation } from '@react-navigation/native';
 import { 
-    setModalVisible as setModalVisibleAction, 
     addProductsToList as addProductsToListAction
 } from '../../../store/actions';
-import { AlertContext,  } from '../../../globalState';
+import { AlertContext } from '../../../globalState';
 import api from '../../../services/api';
 
 const Content = styled.View`
@@ -19,9 +18,9 @@ export function FindProduct() {
     const { dispatchAlert } = React.useContext(AlertContext);
 
     const dispatch = useDispatch()
+    const navigation = useNavigation();
 
     const addProductsToList = products => dispatch(addProductsToListAction(products));
-    const setModalVisible = (visibility) => dispatch(setModalVisibleAction(visibility));
 
     const [codigoMercadoria, setCodigoMercadoria] = useState('');
     const [descricao, setDescricao] = useState('');
@@ -40,14 +39,21 @@ export function FindProduct() {
             return;
         } 
 
-        const productsToList = await api.productsFake;
-        setModalVisible(true);
-        addProductsToList(productsToList);
+        const response = await api.getProducts({
+            codigoMercadoria, 
+            descricao,
+            qualquerParte,
+            atacado,
+            promocao
+        });
+
+        addProductsToList(response.data);
+        navigation.navigate('ListFindProducts');
     }
 
     useEffect(() => {
         setCodigoMercadoria(codigoMercadoria.replace(/[^0-9]/g, ""));
-        console.log(codigoMercadoria);
+
     }, [codigoMercadoria]);
 
     return (
@@ -71,20 +77,23 @@ export function FindProduct() {
                         label="Pesquisar em qualquer parte" 
                         status={qualquerParte ? 'checked' : 'unchecked'} 
                         onPress={() => setQualquerParte(!qualquerParte)}
+                         color="#40C4FF" 
                     />
                 </View>
                 <View style={{paddingTop: -13}}>
                     <Checkbox.Item  
                         label="Mostrar Itens em Atacado" 
                         status={atacado ? 'checked' : 'unchecked'} 
-                        onPress={() => setAtacado(!atacado)}    
+                        onPress={() => setAtacado(!atacado)}   
+                         color="#40C4FF"  
                     />
                 </View>
                 <View style={{paddingTop: -13}}>
                     <Checkbox.Item 
                         label="Mostrar Itens em Promoção" 
                         status={promocao ? 'checked' : 'unchecked'} 
-                        onPress={() => setPromocao(!promocao)}     
+                        onPress={() => setPromocao(!promocao)}    
+                        color="#40C4FF" 
                     />                    
                 </View>
                 <Button 

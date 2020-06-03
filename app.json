@@ -26,7 +26,9 @@
     },
     "android": {
       "package": "com.grupocoqueiro.vendadiretor",
-      "versionCode": 1
-    }
+      "versionCode": 1,
+      "enableDangerousExperimentalLeanBuilds": true
+    },
+    "description": ""
   }
 }

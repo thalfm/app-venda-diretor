@@ -1,5 +1,20 @@
 import * as TYPES from "./types";
 
+
+export function login() {
+    return {
+        type: TYPES.IS_LOGGED,
+        login: true
+    }
+}
+
+export function logout() {
+    return {
+        type: TYPES.IS_LOGGED,
+        login: false
+    }
+}
+
 export function addItens(item) {
     return {
         type: TYPES.ADD_ITENS,
@@ -14,19 +29,20 @@ export function delItens(item) {
     }
 }
 
+export function delAllItens(item) {
+    return {
+        type: TYPES.DEL_ALL_ITENS
+    }
+}
+
 export function addProductsToList(products) {
+    
     return {
         type: TYPES.ADD_PRODUCTS_TO_LIST,
         products: products 
     }
 }
 
-export function setModalVisible(visiblity) {
-    return {
-        type: TYPES.VISIBILITY_MODAL_PRODUCT,
-        visibility: visiblity 
-    }
-}
 
 export function setQuantityProductsInList(quantity) {
     return {

@@ -1,3 +1,2 @@
-export { ListProducts } from './ListProducts';
-export { ModalProducts } from './ModalProducts';
+export { ListAddProducts } from './ListAddProducts';
 export { FindProduct }from './FindProduct';

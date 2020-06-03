@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BackHandler } from 'react-native';
 import { Toolbar, BottomNavigation } from 'react-native-material-ui';
 import Constants from 'expo-constants';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigation } from '@react-navigation/native';
-import { setModalVisible as setModalVisibleAction } from '../../store/actions';
+import { logout as logoutAction } from '../../store/actions';
 import { 
-    ModalProducts,
-    ListProducts,
+    ListAddProducts,
     FindProduct
 }from './Components';
 
@@ -20,58 +20,65 @@ export default function Home() {
     const dispatch = useDispatch()
     const navigation = useNavigation();
 
-    const isModalVisible =  useSelector(state => state.isModalVisible);
-    const quantityItensInList =  useSelector(state => state.quantityItensInList);
+    const logout = () => dispatch(logoutAction());
 
-    const setModalVisible = visibility => dispatch(setModalVisibleAction(visibility));
-    
+   const quantityItensInList =  useSelector(state => state.quantityItensInList);
+
     const [aba, setAba] = useState('orcamento');
 
     function handleLogout() {
+        logout();
         navigation.navigate('Login');
     }
 
     function handleAbaItens() {
-        setModalVisible(false);
         setAba('itens');
     }
 
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', () => true)
+        return () =>
+          BackHandler.removeEventListener('hardwareBackPress', () => true)
+      }, [])
+
     return (
-        <PageView style={{
-            paddingTop: Constants.statusBarHeight
-        }}>
-           
-            <Toolbar
-                centerElement="Venda Diretor"
-                rightElement={{
-                    menu: {
-                        icon: "more-vert",
-                        labels: ["sair"]
-                    }
-                }}
-                onRightElementPress={ handleLogout }
-            />
-            { aba === 'orcamento' &&
-                <FindProduct />
-            }
-            { aba === 'itens' &&
-                <ListProducts />
-            }
-            <BottomNavigation active={aba} hidden={false} >
-                <BottomNavigation.Action
-                    key="orcamento"
-                    icon="shopping-cart"
-                    label="Orçamento"
-                    onPress={() => setAba('orcamento')}
+        <>
+            <PageView style={{
+                paddingTop: Constants.statusBarHeight
+            }}>
+            
+                <Toolbar
+                    centerElement="Venda Diretor"
+                    rightElement={{
+                        menu: {
+                            icon: "more-vert",
+                            labels: ["sair"]
+                        }
+                    }}
+                    onRightElementPress={ handleLogout }
                 />
-                <BottomNavigation.Action
-                    key="itens"
-                    icon="shopping-basket"
-                    label={`Itens (${quantityItensInList})`}
-                    onPress={handleAbaItens}
-                />
-            </BottomNavigation>
-           <ModalProducts isModalVisible={isModalVisible} />
-        </PageView>
+                { aba === 'orcamento' &&
+                    <FindProduct />
+                }
+                { aba === 'itens' &&
+                    <ListAddProducts />
+                }
+                <BottomNavigation active={aba} hidden={false} >
+                    <BottomNavigation.Action
+                        key="orcamento"
+                        icon="shopping-cart"
+                        label="Orçamento"
+                        onPress={() => setAba('orcamento')}
+                    />
+                    <BottomNavigation.Action
+                        key="itens"
+                        icon="shopping-basket"
+                        label={`Itens (${quantityItensInList})`}
+                        onPress={handleAbaItens}
+                    />
+                </BottomNavigation>
+            
+            </PageView>
+        </>
     );
 }

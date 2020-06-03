@@ -1,22 +1,25 @@
 import { INITIAL_STATE } from './state';
-import * as TYPES from './types';
+import * as types from './types';
 
 export default function vendaDiretorReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
-        case TYPES.ADD_ITENS:
+        case types.IS_LOGGED:
+            return {...state, isLogged: action.login}
+
+        case types.ADD_ITENS:
             return {...state, itens: [...state.itens, action.item]}
 
-        case TYPES.DEL_ITENS:
+        case types.DEL_ITENS:
             const newItems = state.itens.filter((item) => item.id !== action.item.id);
             return {...state, itens: newItems}
 
-        case TYPES.ADD_PRODUCTS_TO_LIST:
+        case types.DEL_ALL_ITENS:
+            return {...state, itens: []}
+
+        case types.ADD_PRODUCTS_TO_LIST:
             return { ...state, products: action.products}
 
-        case TYPES.VISIBILITY_MODAL_PRODUCT:
-            return {...state, isModalVisible: action.visibility}
-
-        case TYPES.ALTER_QUANTITY_PRODUCTS:
+        case types.ALTER_QUANTITY_PRODUCTS:
             return {...state, quantityItensInList: state.quantityItensInList + action.quantity}
 
         default:

@@ -1,4 +1,5 @@
 const api = {
+
     productsFake: [
         {
             id: 1,
@@ -50,12 +51,29 @@ const api = {
             isOperaDecimal: true
         }
     ],
-    efetuarPedido: () => {
+
+    getProducts: async ({codigoMercadoria, descricao, qualquerParte, atacado, promocao}) => {
         return {
-                data: {
-                    message: 'Pedido efetuado com sucesso!'
-                }
-        }
+            data: api.productsFake
+        };
+    },
+    efetuarPedido: async (products) => {
+        return {
+            data: {
+                message: 'Pedido efetuado com sucesso!'
+            }
+        };
+    },
+    efetuarLogin: async(usuario, senha) => {   
+        return {
+            data:  {
+                usuario: {
+                    nome: 'Thales'
+                },
+                token: '123456',
+                message: 'Login efetuado com sucesso!'
+            }
+        };
     }
 
 }

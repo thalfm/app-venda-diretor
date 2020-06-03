@@ -1,14 +1,14 @@
 import 'react-native-gesture-handler';
 import { YellowBox } from 'react-native';
 import React from 'react';
-import Routes from './src/routes';
+import NavigationContainer from './src/navigators/NavigationContainer';
 import { Provider as StoreProvider } from 'react-redux'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import store from './src/store'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ContextProvider from './src/globalState/state';
-import SnackBar from './src/Components/SnackBar'
-import DialogBar from './src/Components/DialogBar'
+import SnackBar from './src/components/SnackBar'
+import DialogBar from './src/components/DialogBar'
 
 YellowBox.ignoreWarnings(['componentWillReceiveProps']);
 
@@ -36,7 +36,7 @@ export default function App() {
         }}
       >
          <ContextProvider>
-            <Routes />
+            <NavigationContainer />
             <DialogBar />
             <SnackBar />
          </ContextProvider>
