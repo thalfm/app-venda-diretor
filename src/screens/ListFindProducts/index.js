@@ -10,10 +10,12 @@ import {
     addItens as addItensAction,
     setQuantityProductsInList as setQuantityProductsInListAction
 } from '../../store/actions';
-import imageProduct from '../../assets//cimento.jpeg';
+import { AlertContext } from '../../globalState';
+
 
 export default function ListFindProducts() {
     const dispatch = useDispatch()
+    const { dispatchAlert } = React.useContext(AlertContext);
     const navigation = useNavigation();
 
     const products = useSelector(state => state.products)
@@ -35,7 +37,7 @@ export default function ListFindProducts() {
             return;
         }
 
-        const existItem = await itens.filter((item) => item.id === product.id);
+        const existItem = await itens.filter((item) => item.idMercadoria === product.idMercadoria);
 
         if (existItem.length) {
             dispatchAlert({
@@ -59,13 +61,13 @@ export default function ListFindProducts() {
 
     function handleQuantity(product, quantity) {
         let qtd = quantity;
-        if (!product.isOperaDecimal) {
+        if (!product.podeVenderDecimal) {
             qtd = quantity.replace(/[^0-9]/g, "")
         }
 
         product.quantidade = qtd;
 
-        setQuantidade({ [product.id] : qtd })
+        setQuantidade({ [product.idMercadoria] : qtd })
     }
 
     useEffect(() => {
@@ -82,7 +84,7 @@ export default function ListFindProducts() {
             <View style={styles.container}>
                 <FlatList style={{}}
                     data={products}
-                    keyExtractor={ product => String(product.id) }
+                    keyExtractor={ product => String(product.idMercadoria) }
                     showsVerticalScrollIndicator={true}
                     onEndReachedThreshold={0.20}
                     style={styles.contentList}
@@ -92,19 +94,19 @@ export default function ListFindProducts() {
                         style={styles.card}
                     >
                         <Card.Cover 
-                        style={styles.cardCover} source={imageProduct} 
+                        style={styles.cardCover} source={{uri: 'data:image/png;base64,'+product.imagem}} 
                         />
                         <Card.Content>
-                            <Title>{product.descricao}</Title>
+                            <Title>{product.descricaoAmigavel}</Title>
                             <Paragraph>
-                                Valor: {product.valor}
+                                Valor: {product.precoMinimoFormatado}
                             </Paragraph>
                             <TextInput
                                 style={styles.textInput}
                                 keyboardType="numeric"
                                 mode='outlined'
                                 label='Quantidade'
-                                value={quantidade[product.id] || '1'}
+                                value={quantidade[product.idMercadoria] || '1'}
                                 onChangeText={qtd => handleQuantity(product, qtd)}
                             />
                             <Button 

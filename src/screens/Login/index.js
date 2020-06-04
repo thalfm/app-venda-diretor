@@ -21,6 +21,7 @@ export default function Login() {
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const login = () => dispatch(loginAction());
 
@@ -29,31 +30,32 @@ export default function Login() {
     }
 
     async function handleLogin() {
+        setLoading(true);
         if (!userName || !password) {
             dispatchAlert({
                 type: 'open',
                 alertType: 'info',
                 message: 'Informe um usuário e uma senha'
             });
+            setLoading(false);
             return
         }
 
         const response = await api.efetuarLogin(userName, password);
 
-console.log(response);
-
-        if (response.data.data && response.data.data.sucesso === 1) {
+        if (response.sucesso === 1) {
             login();
             navigation.navigate('Home');
+            setLoading(false);
             return;
         }
 
         dispatchAlert({
             type: 'open',
             alertType: 'error',
-            message: response.data.msg
+            message: response.msg
         });
-       
+       setLoading(false);
     }
 
     useEffect(() => {
@@ -69,6 +71,7 @@ console.log(response);
                 <CardView cor="#FFFFFF" largura="90%" altura="230px">
                     <View style={{top: '5%'}}>
                         <TextInput
+                            disabled={loading}
                             mode='outlined'
                             label='Usuário'
                             value={userName}
@@ -77,6 +80,7 @@ console.log(response);
                     </View>
                     <View  style={{top: '5%'}} >
                         <TextInput
+                            disabled={loading}
                             mode='outlined'
                             label='Código da Mercadoria'
                             onChangeText={text => setPassword(text)}
@@ -99,6 +103,7 @@ console.log(response);
                     </View>
                     <View  style={{top: '15%'}} >
                         <Button
+                            loading={loading}
                             onPress={handleLogin} 
                             mode="contained"
                         >ENTRAR</Button>

@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigation } from '@react-navigation/native';
 import { logout as logoutAction } from '../../store/actions';
+import api from '../../services/api';
+import { AlertContext } from '../../globalState';
 import { 
     ListAddProducts,
     FindProduct
@@ -17,6 +19,7 @@ const PageView = styled.SafeAreaView`
 `;
 
 export default function Home() {
+    const { dispatchAlert } = React.useContext(AlertContext);
     const dispatch = useDispatch()
     const navigation = useNavigation();
 
@@ -26,7 +29,17 @@ export default function Home() {
 
     const [aba, setAba] = useState('orcamento');
 
-    function handleLogout() {
+    async function handleLogout() {
+        const response = await api.efetuarLogout();
+        if (response.sucesso !== 1) {
+            dispatchAlert({
+                type: 'open',
+                alertType: 'error',
+                message: 'Ocorreu um erro ao fazer o logout! Tente novamente mais tarde.'
+            });
+            return;
+        }
+
         logout();
         navigation.navigate('Login');
     }

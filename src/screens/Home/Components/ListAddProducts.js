@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux'
 import {  
@@ -22,6 +22,7 @@ export function ListAddProducts() {
     const delItens = product => dispatch(delItensAcction(product));
     const delAllItens = () => dispatch(delAllItensAction());
     const setQuantityProductsInList = quantity => dispatch(setQuantityProductsInListAction(quantity));
+    const [loading, setLoading] = useState(false);
 
     function handleDeleteItem(product) {
         delItens(product);
@@ -29,6 +30,7 @@ export function ListAddProducts() {
     }
 
     async function handleFinalizarVenda() {
+        setLoading(true);
         const response = await api.efetuarPedido(itens);
 
         dispatchAlert({
@@ -38,8 +40,7 @@ export function ListAddProducts() {
         });
         dispatchDialog({type: 'close'})
         delAllItens();
-        return;
-     
+        setLoading(false);
     }
 
     function openDialogFinalizarPedido() {
@@ -72,7 +73,7 @@ export function ListAddProducts() {
                         divider
                         centerElement={{
                             primaryText: product.descricao,
-                            secondaryText: `Valor: ${product.valor}` ,
+                            secondaryText: `Valor: ${product.precoMinimoFormatado}` ,
                             tertiaryText: `Quantidade: ${product.quantidade || 0}`
                         }}
                         rightElement='delete-forever'
@@ -81,6 +82,7 @@ export function ListAddProducts() {
                 )}
             />
             <Button 
+                loading={loading}
                 color='#00C853'
                 mode="contained"
                 onPress={ openDialogFinalizarPedido }

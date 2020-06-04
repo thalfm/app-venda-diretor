@@ -27,17 +27,30 @@ export function FindProduct() {
     const [qualquerParte, setQualquerParte] = useState(false);
     const [atacado, setAtacado] = useState(false);
     const [promocao, setPromocao] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     
     async function handlesearch() {
-
+        setLoading(true);
         if (!codigoMercadoria && !descricao) {
             dispatchAlert({
                 type: 'open',
                 alertType: 'info',
                 message: 'Informe o código da mercadoria ou uma descrição'
             });
+            setLoading(false);
             return;
         } 
+
+        if (descricao && descricao.length < 3) {
+            dispatchAlert({
+                type: 'open',
+                alertType: 'info',
+                message: 'Informe uma descrição com pelo menos 03 caracteres!'
+            });
+            setLoading(false);
+            return;
+        }
 
         const response = await api.getProducts({
             codigoMercadoria, 
@@ -47,8 +60,19 @@ export function FindProduct() {
             promocao
         });
 
-        addProductsToList(response.data);
-        navigation.navigate('ListFindProducts');
+        if (response.listaMercadoria) {
+            addProductsToList(response.listaMercadoria);
+            navigation.navigate('ListFindProducts');
+            setLoading(false);
+            return;
+        }
+
+        dispatchAlert({
+            type: 'open',
+            alertType: 'error',
+            message: response.msg
+        });
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -60,6 +84,7 @@ export function FindProduct() {
         <ScrollView>
             <Content>
                 <TextInput
+                    disabled={loading || descricao.length > 1}
                     keyboardType="numeric"
                     mode='outlined'
                     label='Código da Mercadoria'
@@ -67,6 +92,7 @@ export function FindProduct() {
                     onChangeText={setCodigoMercadoria}
                 />
                 <TextInput
+                    disabled={loading || codigoMercadoria.length > 1}
                     mode='outlined'
                     label='Descrição da Mercadoria'
                     value={descricao}
@@ -80,7 +106,7 @@ export function FindProduct() {
                          color="#40C4FF" 
                     />
                 </View>
-                <View style={{paddingTop: -13}}>
+                {/*<View style={{paddingTop: -13}}>
                     <Checkbox.Item  
                         label="Mostrar Itens em Atacado" 
                         status={atacado ? 'checked' : 'unchecked'} 
@@ -95,8 +121,9 @@ export function FindProduct() {
                         onPress={() => setPromocao(!promocao)}    
                         color="#40C4FF" 
                     />                    
-                </View>
+                </View>*/}
                 <Button 
+                    loading={loading}
                     mode="contained"
                     icon="search"
                     onPress={handlesearch}
