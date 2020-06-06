@@ -8,7 +8,7 @@ export const PageView = styled.SafeAreaView`
 
 export const ViewLogo = styled.View`
     position: absolute;
-    left: 52px;
+    left: 17%;
     top: 58px;
     width: 273px;
     align-items: center;

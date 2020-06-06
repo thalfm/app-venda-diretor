@@ -10,7 +10,11 @@ import ContextProvider from './src/globalState/state';
 import SnackBar from './src/components/SnackBar'
 import DialogBar from './src/components/DialogBar'
 
-YellowBox.ignoreWarnings(['componentWillReceiveProps']);
+YellowBox.ignoreWarnings([
+  'VirtualizedLists should never be nested',
+  'componentWillUpdate has been renamed',
+  'componentWillReceiveProps has been renamed'
+])
 
 const theme = {
   ...DefaultTheme,
@@ -24,7 +28,6 @@ const theme = {
     accent: '#FFFFFF',
   },
 };
-
 
 export default function App() {
   return (

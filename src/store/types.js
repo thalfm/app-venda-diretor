@@ -1,4 +1,5 @@
 export const IS_LOGGED = 'IS_LOGGED';
+export const IS_LOGGEDOUT = 'IS_LOGGEDOUT';
 export const ADD_ITENS = 'ADD_ITENS';
 export const DEL_ITENS = 'DEL_ITENS';
 export const DEL_ALL_ITENS = 'DEL_ALL_ITENS';

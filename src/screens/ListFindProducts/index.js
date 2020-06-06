@@ -106,7 +106,8 @@ export default function ListFindProducts() {
                                 keyboardType="numeric"
                                 mode='outlined'
                                 label='Quantidade'
-                                value={quantidade[product.idMercadoria] || '1'}
+                                defaultValue="1"
+                                value={quantidade[product.idMercadoria]}
                                 onChangeText={qtd => handleQuantity(product, qtd)}
                             />
                             <Button 

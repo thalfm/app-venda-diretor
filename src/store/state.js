@@ -2,6 +2,14 @@ export const INITIAL_STATE = {
     isLogged: false,
     itens: [],
     products: [],
-    isModalVisible: false,
-    quantityItensInList: 0
+    quantityItensInList: 0,
+    usuario: {
+        idFuncionario: '',
+        idLoja: '',
+        loja: '',
+        idDeposito: '',
+        deposito: '',
+        miniaturaImagemPerfil: '',
+        idTerceiro: ''
+    }
 };

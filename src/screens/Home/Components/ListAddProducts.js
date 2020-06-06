@@ -8,6 +8,7 @@ import {
 } from '../../../store/actions';
 import { ListItem } from 'react-native-material-ui';
 import { View } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Button } from 'react-native-paper';
 import { DialogContext, AlertContext } from '../../../globalState';
 import api from '../../../services/api';
@@ -24,6 +25,7 @@ export function ListAddProducts() {
     const setQuantityProductsInList = quantity => dispatch(setQuantityProductsInListAction(quantity));
     const [loading, setLoading] = useState(false);
 
+
     function handleDeleteItem(product) {
         delItens(product);
         setQuantityProductsInList(-1);
@@ -31,15 +33,37 @@ export function ListAddProducts() {
 
     async function handleFinalizarVenda() {
         setLoading(true);
-        const response = await api.efetuarPedido(itens);
+        let usuario = await AsyncStorage.getItem('usuario');;
+        usuario = JSON.parse(usuario);
 
-        dispatchAlert({
-            type: 'open',
-            alertType: 'success',
-            message: response.data.message
-        });
+        const products = itens.map((item) => {
+            return  {
+                tipoPrecoMercadoria: 'n', 
+                valor: item.precoMinimo , 
+                codigoMercadoria: item.idMercadoria, 
+                quantidade: item.quantidade
+            } 
+        })
+
+        const response = await api.efetuarPedido(products, usuario);
+
+        if (response.sucesso === true) {
+            dispatchAlert({
+                type: 'open',
+                alertType: 'success',
+                message: response.msg
+            });
+            delAllItens();
+        }else {
+            dispatchAlert({
+                type: 'open',
+                alertType: 'error',
+                message: 'Ocorreu um erro ao realizar o pedido! Tente novamente mais tarde!'
+            });
+        }
+
         dispatchDialog({type: 'close'})
-        delAllItens();
+       
         setLoading(false);
     }
 
@@ -62,10 +86,11 @@ export function ListAddProducts() {
     }
 
     return (
+      
         <View style={{flex:1}}>
             <FlatList tyle={{marginTop: 32}}
                 data={itens}
-                keyExtractor={ product => String(product.id) }
+                keyExtractor={ product => String(product.idMercadoria) }
                 showsVerticalScrollIndicator={true}
                 onEndReachedThreshold={0.20}
                 renderItem={({ item: product }) => (

@@ -1,24 +1,34 @@
 import * as TYPES from "./types";
 
 
-export function login() {
+export function login(payload) {
     return {
         type: TYPES.IS_LOGGED,
-        login: true
+        login: true,
+        payload: payload
     }
 }
 
 export function logout() {
     return {
-        type: TYPES.IS_LOGGED,
-        login: false
+        type: TYPES.IS_LOGGEDOUT,
+        login: false,
+        payload: {
+                    idFuncionario: '',
+                    idLoja: '',
+                    loja: '',
+                    idDeposito: '',
+                    deposito: '',
+                    miniaturaImagemPerfil: '',
+                    idTerceiro: ''
+                }
     }
 }
 
 export function addItens(item) {
     return {
         type: TYPES.ADD_ITENS,
-        item: item 
+        item: item
     }
 }
 

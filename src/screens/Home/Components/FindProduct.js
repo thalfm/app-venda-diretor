@@ -4,9 +4,7 @@ import { TextInput, Checkbox, Button } from 'react-native-paper';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux'
 import { useNavigation } from '@react-navigation/native';
-import { 
-    addProductsToList as addProductsToListAction
-} from '../../../store/actions';
+import { addProductsToList as addProductsToListAction } from '../../../store/actions';
 import { AlertContext } from '../../../globalState';
 import api from '../../../services/api';
 
@@ -106,22 +104,6 @@ export function FindProduct() {
                          color="#40C4FF" 
                     />
                 </View>
-                {/*<View style={{paddingTop: -13}}>
-                    <Checkbox.Item  
-                        label="Mostrar Itens em Atacado" 
-                        status={atacado ? 'checked' : 'unchecked'} 
-                        onPress={() => setAtacado(!atacado)}   
-                         color="#40C4FF"  
-                    />
-                </View>
-                <View style={{paddingTop: -13}}>
-                    <Checkbox.Item 
-                        label="Mostrar Itens em Promoção" 
-                        status={promocao ? 'checked' : 'unchecked'} 
-                        onPress={() => setPromocao(!promocao)}    
-                        color="#40C4FF" 
-                    />                    
-                </View>*/}
                 <Button 
                     loading={loading}
                     mode="contained"

@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Image, BackHandler } from 'react-native';
+import { View, Image } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { TextInput,  Button } from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux'
-import {  
-    login as loginAction
-} from '../../store/actions';
+import { login as loginAction } from '../../store/actions';
 import imageLogo from '../../assets/logo.png'
 import { AlertContext } from '../../globalState';
 import { PageView, ViewLogo, CardView, Quadrado, KeyboardArea } from './StyledComponents';
@@ -23,7 +22,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const login = () => dispatch(loginAction());
+    const login = (payload) => dispatch(loginAction(payload));
 
     function onAccessoryPress() {
         setSecureTextEntry(!secureTextEntry)
@@ -44,8 +43,10 @@ export default function Login() {
         const response = await api.efetuarLogin(userName, password);
 
         if (response.sucesso === 1) {
-            login();
-            navigation.navigate('Home');
+            login(response.data);
+            const json = JSON.stringify(response.data)
+            await AsyncStorage.setItem('usuario', json);
+        
             setLoading(false);
             return;
         }
@@ -57,13 +58,6 @@ export default function Login() {
         });
        setLoading(false);
     }
-
-    useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', () => true)
-        return () =>
-          BackHandler.removeEventListener('hardwareBackPress', () => true)
-      }, [])
-  
 
     return (
         <PageView>

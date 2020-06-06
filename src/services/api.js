@@ -18,47 +18,53 @@ const api = {
                 itensPromocao: promocao,
                 comImagem: true
             }
-        }).then(response => { 
-            return response.data;
         })
-        .catch(error => {
-            console.log(error)
-        });
-
+        .then(response => response.data)
+        .catch(error =>error.response.data);
         return response || {};
     },
-    efetuarPedido: async (products) => {
-        return {
-            data: {
-                message: 'Pedido efetuado com sucesso!'
-            }
-        };
+    efetuarPedido: async (products, usuario) => {
+        const response = await apiAxios.post('venda/diretor', {
+            codigoLoja: usuario.idLoja,
+            codigoCliente: usuario.idTerceiro,
+            itens: products,
+            token: TOKEN_DISPOSITIVO
+        })
+        .then(response => response.data)
+        .catch(error =>error.response.data);
+
+        return response || {};
     },
     efetuarLogin: async (usuario, senha) => {   
         const response = await apiAxios.post('mobile/autenticacao/login', {
             usuario: usuario,
             senha: senha,
             token: TOKEN_DISPOSITIVO
-        }).then(response => { 
-            return response.data;
         })
-        .catch(error => {
-            console.log(error)
-        });;
+        .then(response => response.data)
+        .catch(error =>error.response.data);
 
         return response || {};
     },
     efetuarLogout: async() => {
         const response = await apiAxios.post('mobile/autenticacao/logout', {
             token: TOKEN_DISPOSITIVO
-        }).then(response => { 
-            return response.data;
         })
-        .catch(error => {
-            console.log(error)
-        });;
+        .then(response => response.data)
+        .catch(error =>error.response.data);
 
         return response || {};
+    },
+    checkLogin: async () => {
+        const response = await apiAxios.get('mobile/autenticacao/get-dados-login-por-token-dispositivo', {
+            params: {
+                token: TOKEN_DISPOSITIVO
+            }
+        })
+        .then(response => response.data)
+        .catch(error =>error.response.data);
+
+        return response;
     }
 
 }
