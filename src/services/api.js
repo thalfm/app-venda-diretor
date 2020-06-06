@@ -36,7 +36,7 @@ const api = {
         return response || {};
     },
     efetuarLogin: async (usuario, senha) => {   
-        const response = await apiAxios.post('mobile/autenticacao/login', {
+        const response = await apiAxios.post('mobile/autenticacao/login/diretor', {
             usuario: usuario,
             senha: senha,
             token: TOKEN_DISPOSITIVO
