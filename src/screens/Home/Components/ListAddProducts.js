@@ -32,6 +32,7 @@ export function ListAddProducts() {
     }
 
     async function handleFinalizarVenda() {
+        dispatchDialog({type: 'close'})
         setLoading(true);
         let usuario = await AsyncStorage.getItem('usuario');;
         usuario = JSON.parse(usuario);
@@ -61,9 +62,6 @@ export function ListAddProducts() {
                 message: 'Ocorreu um erro ao realizar o pedido! Tente novamente mais tarde!'
             });
         }
-
-        dispatchDialog({type: 'close'})
-       
         setLoading(false);
     }
 

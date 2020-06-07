@@ -5,6 +5,7 @@ export const INITIAL_STATE = {
     quantityItensInList: 0,
     usuario: {
         idFuncionario: '',
+        apelido: '',
         idLoja: '',
         loja: '',
         idDeposito: '',

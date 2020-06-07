@@ -26,6 +26,7 @@ const api = {
     efetuarPedido: async (products, usuario) => {
         const response = await apiAxios.post('venda/diretor', {
             codigoLoja: usuario.idLoja,
+            usuario: usuario.apelido,
             codigoCliente: usuario.idTerceiro,
             itens: products,
             token: TOKEN_DISPOSITIVO
@@ -36,7 +37,7 @@ const api = {
         return response || {};
     },
     efetuarLogin: async (usuario, senha) => {   
-        const response = await apiAxios.post('mobile/autenticacao/login/diretor', {
+        const response = await apiAxios.post('venda/login/diretor', {
             usuario: usuario,
             senha: senha,
             token: TOKEN_DISPOSITIVO

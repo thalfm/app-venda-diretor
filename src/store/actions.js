@@ -15,6 +15,7 @@ export function logout() {
         login: false,
         payload: {
                     idFuncionario: '',
+                    apelido: '',
                     idLoja: '',
                     loja: '',
                     idDeposito: '',
