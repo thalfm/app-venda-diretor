@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Toolbar } from 'react-native-material-ui';
-import { TextInput, Button, Card, Title, Paragraph} from 'react-native-paper';
+import { TextInput, Button, Card, Title, Paragraph, Appbar} from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux'
 import Constants from 'expo-constants';
@@ -78,9 +77,9 @@ export default function ListFindProducts() {
         <View
             style={styles.contentContainer}
         >
-            <Toolbar
-                centerElement="Adicione itens a sua lista"
-            />
+            <Appbar.Header>
+                <Appbar.Content title="Adicione itens a sua lista" />
+            </Appbar.Header>
             <View style={styles.container}>
                 <FlatList style={{}}
                     data={products}
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Constants.statusBarHeight,
         backgroundColor:'white',
-        paddingBottom: 60
+        paddingBottom: 85
     },
     container: {
         paddingTop: 3,

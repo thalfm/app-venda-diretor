@@ -40,7 +40,7 @@ export function delItens(item) {
     }
 }
 
-export function delAllItens(item) {
+export function delAllItens() {
     return {
         type: TYPES.DEL_ALL_ITENS
     }
@@ -59,5 +59,18 @@ export function setQuantityProductsInList(quantity) {
     return {
         type: TYPES.ALTER_QUANTITY_PRODUCTS,
         quantity: quantity 
+    }
+}
+
+export function subQuantityProductsInList(quantity) {
+    return {
+        type: TYPES.SUB_QUANTITY_PRODUCTS,
+        quantity: quantity 
+    }
+}
+
+export function zeroQuantityProductsInList() {
+    return {
+        type: TYPES.ZERO_QUANTITY_PRODUCTS
     }
 }

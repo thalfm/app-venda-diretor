@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux'
 import {  
     delItens as delItensAcction,
     delAllItens as delAllItensAction,
-    setQuantityProductsInList as setQuantityProductsInListAction
+    subQuantityProductsInList as subQuantityProductsInListAction,
+    zeroQuantityProductsInList as zeroQuantityProductsInListAction
 } from '../../../store/actions';
-import { ListItem } from 'react-native-material-ui';
-import { View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Button } from 'react-native-paper';
+import { Button, Title, Paragraph, Divider, IconButton, Subheading } from 'react-native-paper';
 import { DialogContext, AlertContext } from '../../../globalState';
 import api from '../../../services/api';
 
@@ -22,13 +22,21 @@ export function ListAddProducts() {
 
     const delItens = product => dispatch(delItensAcction(product));
     const delAllItens = () => dispatch(delAllItensAction());
-    const setQuantityProductsInList = quantity => dispatch(setQuantityProductsInListAction(quantity));
+    const subQuantityProductsInList = quantity => dispatch(subQuantityProductsInListAction(quantity));
+    const zeroQuantityProductsInList = () => dispatch(zeroQuantityProductsInListAction());
+
     const [loading, setLoading] = useState(false);
 
 
     function handleDeleteItem(product) {
         delItens(product);
-        setQuantityProductsInList(-1);
+        subQuantityProductsInList(1);
+        dispatchDialog({type: 'close'})
+        dispatchAlert({
+            type: 'open',
+            alertType: 'success',
+            message: 'Item removido com sucesso!'
+        });
     }
 
     async function handleFinalizarVenda() {
@@ -55,14 +63,24 @@ export function ListAddProducts() {
                 message: response.msg
             });
             delAllItens();
+            zeroQuantityProductsInList();
         }else {
             dispatchAlert({
                 type: 'open',
                 alertType: 'error',
-                message: 'Ocorreu um erro ao realizar o pedido! Tente novamente mais tarde!'
+                message: response.msg ? response.msg : 'Ocorreu um erro ao realizar o pedido! Tente novamente mais tarde!'
             });
         }
         setLoading(false);
+    }
+
+    function openDialogDelItem(product) {
+        dispatchDialog({
+            type: 'open',
+            title: 'Exclusão de item da lista',
+            message: `Deseja realmente remover o item: ${product.descricao}?`,
+            okFunc: () => { handleDeleteItem(product) }
+        })
     }
 
     function openDialogFinalizarPedido() {
@@ -84,24 +102,31 @@ export function ListAddProducts() {
     }
 
     return (
-      
-        <View style={{flex:1}}>
-            <FlatList tyle={{marginTop: 32}}
+        <View style={styles.contentContainer}>
+            <FlatList style={styles.list}
                 data={itens}
                 keyExtractor={ product => String(product.idMercadoria) }
                 showsVerticalScrollIndicator={true}
                 onEndReachedThreshold={0.20}
                 renderItem={({ item: product }) => (
-                    <ListItem
-                        divider
-                        centerElement={{
-                            primaryText: product.descricao,
-                            secondaryText: `Valor: ${product.precoMinimoFormatado}` ,
-                            tertiaryText: `Quantidade: ${product.quantidade || 0}`
-                        }}
-                        rightElement='delete-forever'
-                        onRightElementPress={() => handleDeleteItem(product)}
-                    />
+                    <>
+                        <View style={styles.listItem}>
+                            <View style={styles.lisItemDescption}>
+                                <Title>{product.idMercadoria} - {product.descricao}</Title>
+                                <Paragraph>Valor: {product.precoMinimoFormatado}</Paragraph>
+                                <Subheading>Quantidade: {product.quantidade}</Subheading>
+                            </View>
+                            <View style={styles.listItemActions}>
+                                <IconButton
+                                    icon="delete-forever"
+                                    color="#e51c23"
+                                    size={25}
+                                    onPress={() => openDialogDelItem(product)}
+                                />
+                            </View>
+                        </View>
+                        <Divider />
+                    </>
                 )}
             />
             <Button 
@@ -113,3 +138,23 @@ export function ListAddProducts() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    contentContainer: {
+        flex: 1
+    },
+    list: {
+        marginTop: 32
+    },
+    listItem: {
+        padding: 10,
+        flex: 1,
+        flexDirection: "row"
+    },
+    lisItemDescption: {
+        width: '85%'
+    },
+    listItemActions: {
+        flexDirection: "row"
+    }
+});

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BackHandler, AsyncStorage, ActivityIndicator, Modal } from 'react-native';
-import { Toolbar, BottomNavigation } from 'react-native-material-ui';
+import { BackHandler, StyleSheet } from 'react-native';
+import { BottomNavigation, Appbar, Menu, Avatar } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage';
 import Constants from 'expo-constants';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigation } from '@react-navigation/native';
 import { logout as logoutAction } from '../../store/actions';
 import api from '../../services/api';
-import { AlertContext } from '../../globalState';
+import { AlertContext, SpinnerContext } from '../../globalState';
 import { ListAddProducts, FindProduct }from './Components';
 
 const PageView = styled.SafeAreaView`
@@ -15,27 +16,30 @@ const PageView = styled.SafeAreaView`
     flex: 1;
 `;
 
-const Box = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-`;
-
 export default function Home() {
     const { dispatchAlert } = React.useContext(AlertContext);
+    const { dispatchSpinner } = React.useContext(SpinnerContext);
     const dispatch = useDispatch()
     const navigation = useNavigation();
-
     const logout = () => dispatch(logoutAction());
 
-   const quantityItensInList =  useSelector(state => state.quantityItensInList);
+    const [stateAba, setStateAba] = useState({
+        index: 0,
+        routes: [
+          { key: 'orcamento', title: 'Orçamento', icon: 'shopping-cart' },
+          { key: 'itens', title: `Itens(0)`, icon: 'shopping-basket' },
+        ],
+      });
+    const [isMenuVisible, setMenuVisible] = useState(false); 
 
-    const [aba, setAba] = useState('orcamento');
-    const [loadingLogout, setLoadingLogout] = useState(false);
+    const quantityItensInList =  useSelector(state => state.quantityItensInList);
+    const usuario =  useSelector(state => state.usuario);
+    const isLogged = useSelector(state => state.isLogged);
 
     async function handleLogout() {
-        setLoadingLogout(true);
+        setMenuVisible(false);
+        dispatchSpinner({type: 'open'});
+
         const response = await api.efetuarLogout();
 
         if (response.sucesso !== 1) {
@@ -44,18 +48,25 @@ export default function Home() {
                 alertType: 'error',
                 message: 'Ocorreu um erro ao fazer o logout! Tente novamente mais tarde.'
             });
-            setLoadingLogout(false);
+            dispatchSpinner({type: 'close'});
             return;
         }
         await AsyncStorage.removeItem('usuario');
         logout();
-        setLoadingLogout(false);
+        dispatchSpinner({type: 'close'});
         navigation.navigate('Login');
     }
 
-    function handleAbaItens() {
-        setAba('itens');
-    }
+    const _handleIndexChange = index => setStateAba({...stateAba, index:index});
+
+    const _renderScene = BottomNavigation.SceneMap({
+        orcamento: () => <FindProduct />,
+        itens: () => <ListAddProducts />,
+    });
+
+    useEffect(() => {
+        stateAba.routes[1].title = `Itens(${quantityItensInList})`;
+    }, [quantityItensInList]);
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', () => true)
@@ -68,48 +79,49 @@ export default function Home() {
             <PageView style={{
                 paddingTop: Constants.statusBarHeight
             }}>
-                <Toolbar
-                    centerElement="Venda Diretor"
-                    rightElement={{
-                        menu: {
-                            icon: "more-vert",
-                            labels: ["sair"]
+                <Appbar.Header>
+                    {isLogged && usuario.miniaturaImagemPerfil &&
+                        <Avatar.Image  style={styles.avatar} size={50} source={{uri: 'data:image/png;base64,' + usuario.miniaturaImagemPerfil}} />
+                    }
+                    {isLogged && !usuario.miniaturaImagemPerfil &&
+                        <Avatar.Icon style={styles.avatar} size={50} icon="person-outline" />
+                    }
+                    <Appbar.Content title="Venda Diretor" subtitle={`Olá, ${usuario.apelido}`} />
+                    <Menu
+                        visible={isMenuVisible}
+                        onDismiss={() => setMenuVisible(false)}
+                        anchor={
+                            <Appbar.Action
+                                icon='more-horiz'
+                                style={{
+                                    backgroundColor: "#FFFFFF"
+                                }} 
+                                onPress={() => setMenuVisible(true)} />
                         }
-                    }}
-                    onRightElementPress={ handleLogout }
+                    >
+                        <Menu.Item 
+                            icon='power-settings-new'
+                            onPress={handleLogout} 
+                            title="Sair" 
+                        />
+                    </Menu>
+                </Appbar.Header>
+
+                 <BottomNavigation
+                    navigationState={stateAba}
+                    onIndexChange={_handleIndexChange}
+                    renderScene={_renderScene}
                 />
-
-                <Modal
-                    transparent={true}
-                    animationType= "fade"
-                    visible={loadingLogout}
-                >
-                    <Box>
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    </Box>
-                </Modal>
-
-                { aba === 'orcamento' &&
-                    <FindProduct />
-                }
-                { aba === 'itens' &&
-                    <ListAddProducts />
-                }
-                <BottomNavigation active={aba} hidden={false} >
-                    <BottomNavigation.Action
-                        key="orcamento"
-                        icon="shopping-cart"
-                        label="Orçamento"
-                        onPress={() => setAba('orcamento')}
-                    />
-                    <BottomNavigation.Action
-                        key="itens"
-                        icon="shopping-basket"
-                        label={`Itens (${quantityItensInList})`}
-                        onPress={handleAbaItens}
-                    />
-                </BottomNavigation>
             </PageView>
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    avatar: {
+        borderColor:"#FFF",
+        borderWidth: 1,
+        marginBottom: 15,
+        marginLeft: 15
+    }
+});

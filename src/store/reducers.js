@@ -24,7 +24,7 @@ export default function vendaDiretorReducer(state = INITIAL_STATE, action) {
             return {...state, itens: newItems}
 
         case types.DEL_ALL_ITENS:
-            return {...state, itens: [],  quantityItensInList: 0}
+            return {...state, itens: []}
 
         case types.ADD_PRODUCTS_TO_LIST:
             return { ...state, products: action.products}
@@ -32,6 +32,12 @@ export default function vendaDiretorReducer(state = INITIAL_STATE, action) {
         case types.ALTER_QUANTITY_PRODUCTS:
             return {...state, quantityItensInList: state.quantityItensInList + action.quantity}
 
+        case types.SUB_QUANTITY_PRODUCTS:
+            return {...state, quantityItensInList: state.quantityItensInList - action.quantity}
+    
+        case types.ZERO_QUANTITY_PRODUCTS:
+            return {...state, quantityItensInList: 0}
+        
         default:
             return state
     }

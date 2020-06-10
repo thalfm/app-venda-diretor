@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AlertProvider } from './alert-provider';
 import { DialogProvider } from './dialog-provider';
+import { SpinnerProvider } from './spinner-provider';
 
 function ProviderComposer({ contexts, children }) {
   return contexts.reduceRight(
@@ -14,7 +15,7 @@ function ProviderComposer({ contexts, children }) {
 
 function ContextProvider({ children }) {
   return (
-    <ProviderComposer contexts={[<AlertProvider />, <DialogProvider />]}>
+    <ProviderComposer contexts={[<AlertProvider />, <DialogProvider />, <SpinnerProvider />]}>
       {children}
     </ProviderComposer>
   );

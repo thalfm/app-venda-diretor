@@ -9,11 +9,13 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ContextProvider from './src/globalState/state';
 import SnackBar from './src/components/SnackBar'
 import DialogBar from './src/components/DialogBar'
+import Spinner from './src/components/Spinner'
 
 YellowBox.ignoreWarnings([
   'VirtualizedLists should never be nested',
   'componentWillUpdate has been renamed',
-  'componentWillReceiveProps has been renamed'
+  'componentWillReceiveProps has been renamed',
+  "Can't perform a React state update on an unmounted component"
 ])
 
 const theme = {
@@ -42,6 +44,7 @@ export default function App() {
             <NavigationContainer />
             <DialogBar />
             <SnackBar />
+            <Spinner />
          </ContextProvider>
       </PaperProvider>
     </StoreProvider>
